@@ -7,7 +7,14 @@ const app = express();
 require('dotenv').config()
 
 
-app.use(cors({ origin: 'https://form-365.netlify.app/' }));
+// Configuración de CORS
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://form-365.netlify.app');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
+ /*app.use(cors({ origin: 'https://form-365.netlify.app/' }));*/
 app.use(bodyParser.json());
 
 
