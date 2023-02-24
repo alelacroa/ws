@@ -7,7 +7,7 @@ const app = express();
 require('dotenv').config()
 
 
-app.use(cors({ origin: 'http://127.0.0.1:5500' }));
+app.use(cors({ origin: 'https://form-365.netlify.app/' }));
 app.use(bodyParser.json());
 
 
