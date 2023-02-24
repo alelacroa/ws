@@ -1,20 +1,25 @@
+
 const mysql = require("mysql2");
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const express = require("express");
 const app = express();
+require('dotenv').config()
+
 
 app.use(cors({ origin: 'http://127.0.0.1:5500' }));
 app.use(bodyParser.json());
 
 
-const connection = mysql.createConnection({
+const connection = mysql.createConnection(process.env.DATABASE_URL)
+
+/*const connection = mysql.createConnection({
     host: "aws-sa-east-1.connect.psdb.cloud",
     user: "o04r9fzfpiirohh14vj1",
     password: 'pscale_pw_2kr62MzWRRweTJ01a89VLKu6kbjfw56ZEZREB8TuISX',
     database: "form_data"
 });
-
+*/
 
 
 connection.connect(function(error) {
@@ -24,11 +29,12 @@ connection.connect(function(error) {
     }
     console.log('Conectado como ID: ' + connection.threadId);
   });
+
   
   const axios = require('axios');
 const qs = require('querystring');
 
-app.post('/back/mensajes', (req, res) => {
+app.post('/back', (req, res) => {
   const { nombre, apellido, email, telefono, carrera } = req.body;
   const sql = `INSERT INTO form_submissions (nombre, apellido, email, telefono, carrera)
               VALUES ('${nombre}', '${apellido}', '${email}', '${telefono}', '${carrera}')`;

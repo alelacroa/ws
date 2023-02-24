@@ -12,7 +12,7 @@ form.addEventListener("submit", async (event) => {
     carrera: formData.get("carrera"),
   };
 
-  const response = await fetch("http://localhost:8000/back/mensajes", {
+  const response = await fetch("http://localhost:8000/back", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
