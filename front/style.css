@@ -1,5 +1,5 @@
 form {
-    width: 500px;
+    width: 600px;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -16,7 +16,7 @@ form {
     font-weight: bold;
   }
   
-  input, textarea {
+  input, textarea, select {
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
