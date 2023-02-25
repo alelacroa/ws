@@ -1,7 +1,10 @@
 const form = document.getElementById("formulario");
+const spinner = document.getElementById('spinner');
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+spinner.style.display = 'block';
 
   const formData = new FormData(event.target);
   const data = {
@@ -29,3 +32,4 @@ if (response.ok) {
     alert("Error al enviar el formulario. Por favor, inténtalo de nuevo más tarde.");
   }
 });
+

@@ -14,20 +14,9 @@ app.use((req, res, next) => {
   next();
 });
 
- /*app.use(cors({ origin: 'https://form-365.netlify.app/' }));*/
 app.use(bodyParser.json());
 
-
 const connection = mysql.createConnection(process.env.DATABASE_URL)
-
-/*const connection = mysql.createConnection({
-    host: "aws-sa-east-1.connect.psdb.cloud",
-    user: "o04r9fzfpiirohh14vj1",
-    password: 'pscale_pw_2kr62MzWRRweTJ01a89VLKu6kbjfw56ZEZREB8TuISX',
-    database: "form_data"
-});
-*/
-
 
 connection.connect(function(error) {
     if (error) {
@@ -38,7 +27,7 @@ connection.connect(function(error) {
   });
 
   
-  const axios = require('axios');
+const axios = require('axios');
 const qs = require('querystring');
 
 app.post('/back', (req, res) => {
@@ -89,7 +78,7 @@ app.post('/back', (req, res) => {
 });
 
   
-  const port = 8000;
+const port = 8000;
   app.listen(8000, function() {
     console.log('Server running');
   });
