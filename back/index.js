@@ -77,6 +77,10 @@ app.post('/back', (req, res) => {
   });
 });
 
+app.get('/hello', (req, res) => {
+  res.send('hola cuna')
+})
+
   
 const port = 8000;
   app.listen(8000, function() {
