@@ -1,11 +1,11 @@
-
 const mysql = require("mysql2");
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const express = require("express");
 const app = express();
 require('dotenv').config()
-
+const axios = require('axios');
+const qs = require('querystring');
 
 // Configuración de CORS
 app.use((req, res, next) => {
@@ -16,73 +16,54 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
-const connection = mysql.createConnection(process.env.DATABASE_URL)
+const pool = mysql.createPool(process.env.DATABASE_URL);
 
-connection.connect(function(error) {
-    if (error) {
-      console.error('Error al conectar: ' + error.stack);
-      return;
-    }
-    console.log('Conectado como ID: ' + connection.threadId);
-  });
+pool.getConnection((err, connection) => {
+  if (err) throw err;
+  console.log('Conectado como ID: ' + connection.threadId);
+});
 
-  
-const axios = require('axios');
-const qs = require('querystring');
-
-app.post('/back', (req, res) => {
+app.post('/back', async (req, res) => {
   const { nombre, apellido, email, telefono, carrera } = req.body;
   const sql = `INSERT INTO form_submissions (nombre, apellido, email, telefono, carrera)
               VALUES ('${nombre}', '${apellido}', '${email}', '${telefono}', '${carrera}')`;
 
-  connection.connect(function(error) {
-    if (error) {
-      return res.status(500).json({ error: 'Error de conexión a la base de datos' });
-    }
+  try {
+    const connection = await pool.promise().getConnection();
+    await connection.query(sql);
+    await connection.release();
 
-    connection.query(sql, function(error, result) {
-      if (error) {
-        return res.status(500).json({ error: 'Error de consulta SQL' });
+    const url = 'http://190.210.65.174/neoapi/webservice.asmx/ExecuteTask08';
+    const params = {
+      idTask: 20,
+      param1: 'NA',
+      param2: req.body.nombre,
+      param3: req.body.apellido,
+      param4: req.body.email,
+      param5: req.body.telefono,
+      param6: req.body.carrera,
+      param7: 'BU.com/postgrado',
+      param8: 'Llámame ahora'
+    };
+    const config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
       }
-
-      const url = 'http://190.210.65.174/neoapi/webservice.asmx/ExecuteTask08';
-      const params = {
-        idTask: 20,
-        param1: 'NA',
-        param2: req.body.nombre,
-        param3: req.body.apellido,
-        param4: req.body.email,
-        param5: req.body.telefono,
-        param6: req.body.carrera,
-        param7: 'BU.com/postgrado',
-        param8: 'Llámame ahora'
-      };
-      
-      const config = {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      };
-
-      axios.post(url, qs.stringify(params), config)
-        .then(response => {
-          console.log(response.data);
-          return res.json({ success: true });
-        })
-        .catch(error => {
-          console.log(error);
-          return res.status(500).json({ error: 'Error en la llamada a la API' });
-        });
-    });
-  });
+    };
+    const response = await axios.post(url, qs.stringify(params), config);
+    console.log(response.data);
+    return res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Error de conexión a la base de datos o llamada a la API' });
+  }
 });
 
 app.get('/hello', (req, res) => {
-  res.send('hola cuna')
+  res.send('test')
 })
 
-  
 const port = 8000;
-  app.listen(8000, function() {
-    console.log('Server running');
-  });
+app.listen(8000, function() {
+  console.log('Server running');
+});
